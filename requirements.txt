@@ -1,0 +1,2 @@
+npx expo start
+adb connect localhost:port
