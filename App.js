@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View,Image,TextInput } from 'react-native';
+import { StyleSheet, Text, View,Image,TextInput,Button,Touchable, TouchableOpacity } from 'react-native';
 import React,{useState} from "react";
 
 export default function App() {
@@ -14,7 +14,10 @@ export default function App() {
       />
       <Image source={require('./assets/splash.png')} style={styles.img}/>
       <TextInput style={styles.input} value={textInput} onChangeText={(text)=>setTextInput(text)}/>
-      <Text>{textInput}</Text>
+      <TouchableOpacity>
+          <Text>{textInput}</Text>
+      </TouchableOpacity>
+      <Button title="Save"/>
     </View>
   );
 }
