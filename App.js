@@ -1,27 +1,43 @@
-import React,{useState} from 'react';
+import React,{useState,useReducer} from 'react';
 import {View,Text,TextInput,StyleSheet,Button,ScrollView,FlatList,TouchableOpacity} from 'react-native';
 
+const reducer = (state,action)=>{
+  switch(action.type){
+    case "TODOS":
+      return {...state,todos:action.payload};
+    case "TEXT":
+      return {...state,text:action.payload};
+  }
+}
 const App = () =>{
-  const [todos,setTodos] = useState([]);
-  const [text,setText] = useState("");
+
+  // const [todos,setTodos] = useState([]);
+  // const [text,setText] = useState("");
+  const [state,dispatch]=useReducer(reducer,{todos:[],text:""});
   
   const handlePress = ()=>{
-    if(text){
+    if(state.text){
       // const newTodos = [...todos];//copy and paste into newTodos array
       // newTodos.push(text);
       // setTodos(newTodos);
       //or
-      setTodos([...todos,
-        {
-          value:text,
-          id:new Date().toISOString()
-        }
-      ]);
+      dispatch({
+        type:'TODOS',
+        payload:[...state.todos,
+          {
+            value:state.text,
+            id:new Date().toISOString()
+          }
+        ]
+      });
     }
   };
   const deleteTodo = (id)=>{
-    let newTodos = todos.filter((todo)=>todo.id!==id);
-    setTodos(newTodos)
+    let newTodos = state.todos.filter((todo)=>todo.id!==id);
+    dispatch({
+      type:"TODOS",
+      payload:newTodos
+    })
   };
   const updateTodo = (id)=>{
     // let newTodos = todos.filter((todo)=>todo.id!==id);
@@ -30,19 +46,22 @@ const App = () =>{
     // setTodos([...toupdate,...newTodos]);
     //or
     let newTodos = []
-    for(let i=0;i<todos.length;i++){
-      if(todos[i].id == id){
-        todos[i].value = 'updated'
+    for(let i=0;i<state.todos.length;i++){
+      if(state.todos[i].id == id){
+        state.todos[i].value = 'updated'
       }
-      newTodos.push(todos[i])
+      newTodos.push(state.todos[i])
     }
-    setTodos(newTodos)
+    dispatch({
+      type:"TODOS",
+      payload:newTodos
+    })
   };
   return (
     <View style={styles.root}>
     <Text style={styles.title}>Todo App</Text>
     <View style={styles.inputWrapper}>
-      <TextInput style={styles.input} value={text} onChangeText={(value)=>setText(value)}/>
+      <TextInput style={styles.input} value={state.text} onChangeText={(value)=>dispatch({type:"TEXT",payload:value})}/>
       <Button title="Add" onPress={handlePress}/>
     </View>
     {/* <ScrollView>
@@ -52,7 +71,7 @@ const App = () =>{
     )
     }
     </ScrollView> */}
-    <FlatList data={todos} renderItem={({item})=>(
+    <FlatList data={state.todos} renderItem={({item})=>(
     <View style={styles.viewStyle}>
       <Text style={styles.text}>{item.value}</Text>
       <TouchableOpacity onPress={()=>deleteTodo(item.id)}>
